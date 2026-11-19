@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+  <defs>
+    <linearGradient id="bgE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1D1626"/>
+      <stop offset="100%" stop-color="#352542"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bgE)"/>
+  <rect x="24" y="24" width="432" height="312" rx="14" fill="none" stroke="#E5C158" stroke-width="3"/>
+  <text x="240" y="135" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="38" fill="#FFFFFF" font-weight="bold">第一幕　幕落</text>
+  <line x1="140" y1="160" x2="340" y2="160" stroke="#E5C158" stroke-width="2"/>
+  <text x="240" y="205" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="18" fill="#F2DFB3">國王想到什麼好辦法呢？</text>
+  <rect x="130" y="238" width="220" height="40" rx="20" fill="#5A3D6E" stroke="#E5C158" stroke-width="2"/>
+  <text x="240" y="264" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="16" fill="#FFFFFF" font-weight="bold">敬請期待：第二幕 ▶</text>
+</svg>

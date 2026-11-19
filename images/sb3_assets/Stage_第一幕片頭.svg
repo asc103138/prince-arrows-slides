@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+  <defs>
+    <linearGradient id="bgT" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1E1428"/>
+      <stop offset="100%" stop-color="#3B274C"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="360" fill="url(#bgT)"/>
+  <rect x="22" y="22" width="436" height="316" rx="14" fill="none" stroke="#E5C158" stroke-width="3"/>
+  <text x="240" y="100" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="20" fill="#E5C158" font-weight="bold">四上國語第九課</text>
+  <text x="240" y="165" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="48" fill="#FFFFFF" font-weight="bold">王子折箭</text>
+  <rect x="155" y="192" width="170" height="36" rx="18" fill="#9E2A2B" stroke="#E5C158" stroke-width="2"/>
+  <text x="240" y="217" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="18" fill="#FFFFFF" font-weight="bold">【第一幕】</text>
+  <text x="240" y="272" text-anchor="middle" font-family="Noto Sans TC, PingFang TC, Microsoft JhengHei, sans-serif" font-size="16" fill="#EADBC8">地點：國王房間　｜　人物：國王、王后</text>
+</svg>

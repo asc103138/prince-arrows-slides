@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>《王子折箭》第一幕｜Scratch 3.0 五節課動畫實作</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css" />
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+  <style>
+    :root {
+      --accent:  #e8643a;
+      --accent2: #4fc3f7;
+      --success: #81c784;
+      --warn:    #ffb74d;
+      --purple:  #b388ff;
+      --card-bg: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(255, 255, 255, 0.14);
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      color: #f1f5f9;
+      background: #0d1117;
+    }
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Segoe UI', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .reveal h1 { font-size: 2.0em; line-height: 1.2; }
+    .reveal h2 { font-size: 1.32em; color: var(--accent2); margin-bottom: 0.45em; }
+    .reveal h3 { font-size: 0.95em; color: var(--warn); }
+    .reveal .progress { color: var(--accent); }
+    .reveal .fragment { opacity: 0.15; transition: all 0.3s ease; }
+    .reveal .fragment.visible { opacity: 1; }
+
+    /* === 封面 === */
+    .title-slide { text-align: center; }
+    .title-slide .tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), #ff7043);
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 0.44em;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.7em;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(232,100,58,0.45);
+    }
+    .title-slide .subtitle { font-size: 0.6em; color: #cbd5e1; margin-top: 0.5em; line-height: 1.6; }
+    .title-slide .author { margin-top: 1.6em; font-size: 0.42em; color: #94a3b8; }
+
+    /* === 卡片與網格 === */
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 0.7em;
+    }
+    .card-grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 0.7em;
+    }
+    .adv-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-top: 4px solid var(--accent2);
+      border-radius: 12px;
+      padding: 16px 14px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .adv-card:hover { transform: translateY(-4px); }
+    .adv-card .adv-icon { margin-bottom: 10px; }
+    .adv-card .adv-icon img {
+      width: 68px; height: 68px; object-fit: contain;
+      display: block; margin: 0 auto;
+      filter: drop-shadow(0 0 12px rgba(79,195,247,0.7));
+    }
+    .adv-card .adv-title { font-size: 0.52em; font-weight: 700; color: var(--accent2); margin-bottom: 6px; }
+    .adv-card .adv-desc { font-size: 0.38em; color: #cbd5e1; line-height: 1.55; }
+
+    /* === 雙欄排版 === */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 0.5em;
+    }
+    .two-col-wide {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: center;
+      margin-top: 0.5em;
+    }
+    .col-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      text-align: left;
+    }
+
+    /* === 節次標籤與檔案徽章 === */
+    .lesson-pill {
+      display: inline-block;
+      background: rgba(79,195,247,0.16);
+      border: 1px solid rgba(79,195,247,0.45);
+      color: var(--accent2);
+      padding: 3px 12px;
+      border-radius: 16px;
+      font-size: 0.38em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .file-badge {
+      display: inline-block;
+      background: rgba(255,183,77,0.14);
+      border: 1px solid rgba(255,183,77,0.4);
+      color: var(--warn);
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.38em;
+      font-weight: 700;
+    }
+
+    /* === Scratch 積木造型標籤 === */
+    .scratch-block {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: 700;
+      color: #fff;
+      margin: 2px 2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    }
+    .sb-motion  { background: #4c97ff; }
+    .sb-looks   { background: #9966ff; }
+    .sb-events  { background: #ffbf00; color: #1e293b; }
+    .sb-control { background: #ffab19; color: #1e293b; }
+    .sb-tts     { background: #0fbd8c; }
+
+    /* === 圖說展示框 === */
+    .asset-figure {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .asset-figure img {
+      max-height: 220px;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto 6px;
+    }
+    .asset-caption {
+      font-size: 0.34em;
+      color: #94a3b8;
+    }
+    .sprite-strip {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .sprite-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+      width: 128px;
+    }
+    .sprite-chip img {
+      height: 82px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 4px;
+    }
+    .sprite-chip span {
+      font-size: 0.32em;
+      color: #e2e8f0;
+      display: block;
+    }
+
+    /* === 過關檢核卡 === */
+    .check-box {
+      background: rgba(129, 199, 132, 0.08);
+      border: 1px solid rgba(129, 199, 132, 0.35);
+      border-left: 5px solid var(--success);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 0.43em;
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    /* === 滑桿對比組件 === */
+    .slider-box {
+      position: relative;
+      height: 360px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: #111827;
+      margin-top: 10px;
+    }
+    .slider-layer {
+      position: absolute;
+      inset: 0;
+      padding: 22px 26px;
+      box-sizing: border-box;
+      text-align: left;
+      font-size: 0.42em;
+      line-height: 1.75;
+      overflow-y: auto;
+    }
+    .slider-layer.before { background: #1e1b4b; color: #e0e7ff; }
+    .slider-layer.after  { background: #064e3b; color: #ecfdf5; clip-path: inset(0 100% 0 0); }
+    .slider-divider {
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(to bottom, transparent, #4fc3f7, #81c784, transparent);
+      box-shadow: 0 0 14px #4fc3f7;
+      pointer-events: none;
+    }
+    .slider-ctrl {
+      width: 80%;
+      margin: 12px auto 0;
+      display: block;
+      accent-color: var(--accent2);
+    }
+
+    /* === 動畫與按鈕 === */
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+    .btn-action {
+      background: var(--accent2);
+      color: #0d1117;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .step-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 12px 10px;
+      text-align: left;
+      border: 1px solid var(--card-border);
+      border-top: 4px solid var(--accent2);
+    }
+    .step-card .s-num { font-size: 0.36em; font-weight: 700; color: var(--warn); margin-bottom: 4px; }
+    .step-card .s-title { font-size: 0.43em; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .step-card .s-desc { font-size: 0.33em; color: #cbd5e1; line-height: 1.5; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- Slide 1: 封面 [BG] -->
+    <section data-background-image="images/cover.png"
+             data-background-opacity="0.34"
+             data-background-size="cover">
+      <div class="title-slide">
+        <div class="tag">翰林四上國語 L9 × Scratch 3.0 跨領域動畫課</div>
+        <h1 style="color:#ffffff;">《王子折箭》第一幕</h1>
+        <h2 style="color:var(--accent); font-size:1.1em; margin-top:0.2em;">5 節課小導演動畫實作全攻略</h2>
+        <p class="subtitle">
+          從舞台幕起定位、文字轉語音朗讀，到廣播控制與無聲耳語幕落，<br>
+          一步一步把課本劇本變成會說話、有表情的 Scratch 3.0 戲劇！
+        </p>
+        <p class="author">臺中市梧棲區中正國小 四年級資訊 × 國語教學團隊</p>
+      </div>
+    </section>
+
+    <!-- Slide 2: 互動文字雲 [INTERACT:wordcloud] -->
+    <section id="slide-wordcloud">
+      <h2>課前破冰：把課本劇本變成動畫，需要什麼？</h2>
+      <div style="display:grid; grid-template-columns:260px 1fr; gap:16px; height:440px;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+            <div style="font-size:0.38em; color:var(--accent2); font-weight:700; margin-bottom:8px;">輸入你的點子（角色、積木或效果）</div>
+            <input id="wc-input" type="text" placeholder="例：配音、移動、換造型…" maxlength="15"
+              style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(79,195,247,0.3);
+                     background:rgba(255,255,255,0.08); color:#fff; font-size:13px;
+                     box-sizing:border-box; font-family:inherit; outline:none;" />
+            <button id="wc-btn" class="btn-action" style="width:100%; margin-top:8px;">送出點子 ↵</button>
+          </div>
+          <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:12px; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <div style="font-size:0.36em; color:var(--accent2); font-weight:700; margin-bottom:6px;">
+              全班即時點子
+              <span style="display:inline-block; background:#ff4757; color:#fff; padding:1px 6px; border-radius:10px; font-size:0.85em; animation:pulse 1.5s infinite;">LIVE</span>
+            </div>
+            <div id="wc-list" style="font-size:0.33em; overflow-y:auto; flex:1; color:#cbd5e1;"></div>
+            <div style="margin-top:6px; font-size:0.3em; color:#94a3b8; border-top:1px solid rgba(255,255,255,0.08); padding-top:4px; display:flex; justify-content:space-between; align-items:center;">
+              <div>總提交：<span id="wc-total" style="color:var(--accent); font-weight:700;">0</span> 則　多樣：<span id="wc-unique" style="color:var(--accent2); font-weight:700;">0</span> 種</div>
+              <button id="wc-reset-btn" title="新班級重置文字雲" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#94a3b8; border-radius:4px; font-size:11px; padding:2px 6px; cursor:pointer;">重置 ↺</button>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); border-radius:12px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,0.08);">
+          <canvas id="wc-canvas" style="width:100%; height:100%; display:block;"></canvas>
+          <div id="wc-empty" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#64748b; font-size:0.42em; text-align:center; pointer-events:none; line-height:1.8;">
+            在左側輸入你的想法<br>全班小導演點子雲立刻出現 ✨
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: 動畫三大核心原則 [ICON] -->
+    <section>
+      <h2>小導演秘笈：三大動畫設計原則</h2>
+      <p style="font-size:0.42em; color:#94a3b8; margin-top:-0.3em;">所有學生起始檔都已內建好背景與角色造型，我們只需要專注程式設計！</p>
+      <div class="card-grid-3">
+        <div class="adv-card fragment">
+          <div class="adv-icon"><img src="images/icon_voice.png" alt="雙軌發聲"></div>
+          <div class="adv-title">① 雙軌發聲設計</div>
+          <div class="adv-desc">每句台詞都同時使用「對話氣泡（說出）」與「文字轉語音（朗讀）」，並設定國王 GIANT、王后 ALTO、旁白 TENOR 專屬音色。</div>
+        </div>
+        <div class="adv-card fragment">
+          <div class="adv-icon"><img src="images/icon_action.png" alt="無括號純動作"></div>
+          <div class="adv-title">② 括號指示轉動畫</div>
+          <div class="adv-desc">課本裡的「（強忍淚水）」「（表情苦惱）」絕對不放進台詞！全數改用切換造型、滑行、微跳或轉向動作演出。</div>
+        </div>
+        <div class="adv-card fragment">
+          <div class="adv-icon"><img src="images/icon_broadcast.png" alt="廣播總導演"></div>
+          <div class="adv-title">③ 廣播訊號控節奏</div>
+          <div class="adv-desc">由 Stage（舞台）擔任總導演，依序廣播台詞與幕起幕落訊號，讓角色不搶話、弓箭精準同步閃爍。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: 五節課漸進接力地圖 -->
+    <section>
+      <h2>五節課漸進接力學習地圖</h2>
+      <p style="font-size:0.42em; color:#94a3b8; margin-top:-0.3em;">每節課都有專屬起始檔案，上課開啟當節檔案，完成後馬上接力下一關！</p>
+      <div class="card-grid-5">
+        <div class="step-card fragment" style="border-top-color:#81c784;">
+          <div class="s-num">第 1 節</div>
+          <div class="s-title">起始與定位</div>
+          <div class="s-desc">• 角色綠旗初始化<br>• 舞台布幕最上層<br>• <code>curtain_open</code> 幕起滑行</div>
+        </div>
+        <div class="step-card fragment" style="border-top-color:#4fc3f7;">
+          <div class="s-num">第 2 節</div>
+          <div class="s-title">旁白與語音</div>
+          <div class="s-desc">• 加入 <code>text2speech</code><br>• 旁白微跳與搖晃<br>• 說出＋朗讀雙軌</div>
+        </div>
+        <div class="step-card fragment" style="border-top-color:#ffb74d;">
+          <div class="s-num">第 3 節</div>
+          <div class="s-title">廣播與對話</div>
+          <div class="s-desc">• Stage 廣播接力<br>• 國王病容下沉嘆氣<br>• 王后含淚前傾安慰</div>
+        </div>
+        <div class="step-card fragment" style="border-top-color:#e8643a;">
+          <div class="s-num">第 4 節</div>
+          <div class="s-title">相爭與靈光</div>
+          <div class="s-desc">• 國王苦惱搖頭<br>• 王后微笑細數長處<br>• 想到辦法＋弓箭發亮</div>
+        </div>
+        <div class="step-card fragment" style="border-top-color:#b388ff;">
+          <div class="s-num">第 5 節</div>
+          <div class="s-title">耳語與幕落</div>
+          <div class="s-desc">• 無聲純動作演繹<br>• 點頭 2 次＋幻影淡出<br>• <code>curtain_close</code> 幕落</div>
+        </div>
+      </div>
+      <div class="sprite-strip" style="margin-top:16px;">
+        <div class="sprite-chip"><img src="images/sb3_assets/國王_國王_病容.png" alt="國王"><span>國王（4 造型）</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/王后_王后_坐姿.png" alt="王后"><span>王后（4 造型）</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/旁白_旁白卷軸.svg" alt="旁白"><span>旁白卷軸</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/牆上弓箭_弓箭_一般.png" alt="牆上弓箭"><span>牆上弓箭（2 造型）</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/舞台布幕_紅絨布幕.svg" alt="舞台布幕"><span>舞台布幕</span></div>
+      </div>
+    </section>
+
+    <!-- Slide 5: 第 1 節｜起始與定位 [BG] -->
+    <section data-background-image="images/act1_stage.png"
+             data-background-opacity="0.22"
+             data-background-size="cover">
+      <div class="lesson-pill">第 1 節課｜起始與定位</div>
+      <h2>舞台布幕準備好了嗎？</h2>
+      <div style="margin-bottom:10px;">
+        開啟檔案：<span class="file-badge">學生第1節_起始與定位.sb3</span>
+      </div>
+      <div class="two-col-wide">
+        <div class="col-box">
+          <h3 style="color:var(--success); margin-top:0;">🎯 本節課學習目標</h3>
+          <div style="font-size:0.42em; line-height:1.75; color:#e2e8f0;">
+            1. 學會幫每個角色設定「<strong>綠旗初始狀態</strong>」（隱藏、造型、座標、大小）。<br>
+            2. 認識獨立角色「<strong>舞台布幕</strong>」：開場時要擋在最前面，幕起時往上拉開！<br>
+            3. 看懂從「第一幕片頭」切換到「國王房間」的流程。
+          </div>
+        </div>
+        <div class="asset-figure">
+          <img src="images/sb3_assets/Stage_國王房間.png" alt="國王房間舞台背景">
+          <div class="asset-caption">內建舞台背景：<code>國王房間</code>（病床、雪夜窗戶、宮殿房門）</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: 第 1 節｜核心積木拆解 -->
+    <section>
+      <div class="lesson-pill">第 1 節課｜核心積木</div>
+      <h2>角色初始化 ＋ 舞台布幕「幕起／幕下」</h2>
+      <div class="two-col">
+        <div class="col-box">
+          <h3 style="color:var(--accent2); margin-top:0;">📍 步驟 A：所有角色綠旗歸位</h3>
+          <div style="font-size:0.4em; line-height:1.8; color:#cbd5e1;">
+            片頭播放時，房間裡的角色還不能偷跑出來！<br>
+            • <span class="scratch-block sb-events">當綠旗被點擊</span><br>
+            • <span class="scratch-block sb-looks">隱藏</span>（先躲起來）<br>
+            • <span class="scratch-block sb-looks">造型換成 ...</span>（設定初始表情）<br>
+            • <span class="scratch-block sb-motion">定位到 x: ... y: ...</span> ＋ <span class="scratch-block sb-looks">尺寸設為 ... %</span>
+          </div>
+        </div>
+        <div class="col-box">
+          <h3 style="color:var(--accent); margin-top:0;">🎭 步驟 B：舞台布幕滑行效果</h3>
+          <div style="font-size:0.4em; line-height:1.8; color:#cbd5e1;">
+            • 收到 <code>scene_start</code>：<span class="scratch-block sb-looks">圖層移到最上層</span> ＋ <span class="scratch-block sb-motion">定位到 (0, 0)</span> ＋ <span class="scratch-block sb-looks">顯示</span><br>
+            • 收到 <code>curtain_open</code>：<span class="scratch-block sb-motion">在 1 秒內滑行到 x: 0 y: 360</span>（往上幕起！）<br>
+            • 收到 <code>curtain_close</code>：<span class="scratch-block sb-motion">在 1 秒內滑行到 x: 0 y: 0</span>（向下幕落！）
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: 第 1 節｜過關檢核點 -->
+    <section>
+      <div class="lesson-pill">第 1 節課｜過關檢核點</div>
+      <h2>第 1 節驗收：紅絨布幕順利拉開！</h2>
+      <div class="two-col">
+        <div class="asset-figure">
+          <img src="images/sb3_assets/Stage_第一幕片頭.svg" alt="第一幕片頭">
+          <div class="asset-caption">① 點綠旗先顯示 <code>第一幕片頭</code></div>
+        </div>
+        <div class="asset-figure">
+          <img src="images/sb3_assets/舞台布幕_紅絨布幕.svg" alt="紅絨布幕">
+          <div class="asset-caption">② 進入國王房間後 <code>紅絨布幕</code> 向上滑行拉開</div>
+        </div>
+      </div>
+      <div class="check-box">
+        ✅ <strong>過關檢核點：</strong>點下綠旗後，會先顯示片頭；切換進國王房間時，紅絨布幕會流暢向上拉開，國王、王后與牆上弓箭都穩穩站在正確位置上，沒有歪掉或重疊！
+      </div>
+    </section>
+
+    <!-- Slide 8: 第 2 節｜旁白與文字轉語音 -->
+    <section>
+      <div class="lesson-pill">第 2 節課｜旁白與文字轉語音</div>
+      <h2>幫動畫請來一位說書人：文字轉語音</h2>
+      <div style="margin-bottom:8px;">
+        開啟檔案：<span class="file-badge">學生第2節_旁白與文字轉語音.sb3</span>
+      </div>
+      <div class="two-col-wide">
+        <div class="col-box">
+          <h3 style="color:var(--accent2); margin-top:0;">🔊 新增擴充功能與音色設定</h3>
+          <div style="font-size:0.4em; line-height:1.8; color:#e2e8f0;">
+            1. 點擊左下角「新增擴充功能」→ 選擇 <span class="scratch-block sb-tts">文字轉語音 (Text to Speech)</span>。<br>
+            2. 在綠旗初始化加入：<br>
+            　• <span class="scratch-block sb-tts">語言設為 中文（繁體）</span><br>
+            　• <span class="scratch-block sb-tts">語音設為 TENOR（男高音）</span> → 沉穩說書聲！<br>
+            3. 角色音色小筆記：<br>
+            　• 旁白：<code>TENOR</code>　• 國王：<code>GIANT</code>　• 王后：<code>ALTO</code>
+          </div>
+        </div>
+        <div class="asset-figure">
+          <img src="images/sb3_assets/旁白_旁白卷軸.svg" alt="旁白卷軸">
+          <div class="asset-caption">旁白角色：<code>旁白卷軸</code>（位於舞台左上角）</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: 第 2 節｜雙軌發聲與登場動作 -->
+    <section>
+      <div class="lesson-pill">第 2 節課｜雙軌發聲與動作</div>
+      <h2>旁白 2 句開場：氣泡＋語音＋情緒動作</h2>
+      <div class="two-col">
+        <div class="col-box" style="border-top:4px solid var(--accent2);">
+          <h3 style="color:var(--accent2); margin-top:0;">第 1 句（廣播 <code>line_01_narrator_a</code>）</h3>
+          <div style="font-size:0.39em; line-height:1.75; color:#cbd5e1;">
+            「古時候，有位國王勇敢善戰，受到人民的敬愛。」<br><br>
+            • <strong>登場微跳</strong>：向上移動再落回，表現莊嚴登場<br>
+            • <span class="scratch-block sb-looks">說出 (台詞)</span> → 顯示文字氣泡<br>
+            • <span class="scratch-block sb-tts">朗讀 (台詞)</span> → 念出聲音（會等待念完）<br>
+            • <span class="scratch-block sb-looks">說出 (空白)</span> → 念完立刻清掉氣泡！
+          </div>
+        </div>
+        <div class="col-box" style="border-top:4px solid var(--warn);">
+          <h3 style="color:var(--warn); margin-top:0;">第 2 句（廣播 <code>line_02_narrator_b</code>）</h3>
+          <div style="font-size:0.39em; line-height:1.75; color:#cbd5e1;">
+            「但是，國王生了重病，王子們為了王位而爭吵不休。」<br><br>
+            • <strong>擔憂搖晃</strong>：亮度調暗＋左右輕微搖晃，氣氛轉沉重<br>
+            • 同樣使用 <span class="scratch-block sb-looks">說出</span> ＋ <span class="scratch-block sb-tts">朗讀</span> ＋ <span class="scratch-block sb-looks">說出(空白)</span>
+          </div>
+        </div>
+      </div>
+      <div class="check-box">
+        ✅ <strong>過關檢核點：</strong>旁白登場時會有微跳與擔憂搖晃動作，畫面上能同時看到對話氣泡並聽到中文朗讀，說完氣泡會自動消失。
+      </div>
+    </section>
+
+    <!-- Slide 10: 第 3 節｜廣播與第一段對話 -->
+    <section>
+      <div class="lesson-pill">第 3 節課｜廣播與第一段對話</div>
+      <h2>Stage 總導演上場：國王與王后輪流對話</h2>
+      <div style="margin-bottom:8px;">
+        開啟檔案：<span class="file-badge">學生第3節_廣播與第一段對話.sb3</span>
+      </div>
+      <div class="two-col">
+        <div class="col-box">
+          <h3 style="color:var(--warn); margin-top:0;">🎬 為什麼需要「廣播訊息並等待」？</h3>
+          <div style="font-size:0.39em; line-height:1.75; color:#e2e8f0;">
+            如果大家都用「等待幾秒」，只要改一句台詞就會全部搶話撞車！<br>
+            改由 <strong>Stage（舞台）</strong> 依序發出：<br>
+            1. <span class="scratch-block sb-events">廣播訊息 line_03_king_1 並等待</span><br>
+            2. <span class="scratch-block sb-events">廣播訊息 line_04_queen_1 並等待</span><br>
+            等上一位說完、氣泡清掉，才換下一位接話！
+          </div>
+        </div>
+        <div class="col-box">
+          <h3 style="color:var(--accent2); margin-top:0;">🎭 本節登場角色造型</h3>
+          <div style="display:flex; justify-content:space-around; align-items:center; margin-top:8px;">
+            <div style="text-align:center;">
+              <img src="images/sb3_assets/國王_國王_病容.png" style="height:125px; object-fit:contain;" alt="國王病容">
+              <div style="font-size:0.35em; color:#cbd5e1;"><code>國王_病容</code><br>下沉嘆氣（<code>GIANT</code>）</div>
+            </div>
+            <div style="text-align:center;">
+              <img src="images/sb3_assets/王后_王后_強忍淚水.png" style="height:125px; object-fit:contain;" alt="王后強忍淚水">
+              <div style="font-size:0.35em; color:#cbd5e1;"><code>王后_強忍淚水</code><br>向前滑行安慰後退回（<code>ALTO</code>）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 11: 第 3 節｜迷思診斷投票 [INTERACT:poll] -->
+    <section id="slide-poll">
+      <div class="lesson-pill">第 3 節課｜劇本迷思診斷</div>
+      <h2>快問快答：課本裡的「（強忍淚水）」怎麼做？</h2>
+      <p style="font-size:0.42em; color:#94a3b8; margin-top:-0.3em;">
+        課本寫著：<strong>王后：（強忍淚水）大王，您一定會康復的。</strong><br>
+        在 Scratch 積木裡，括號裡的文字應該怎麼處理才正確？
+      </p>
+      <div id="poll-options" style="display:flex; flex-direction:column; gap:10px; margin-top:0.5em;">
+        <!-- 動態生成選項 -->
+      </div>
+      <div style="font-size:0.36em; color:#94a3b8; text-align:center; margin-top:0.8em; display:flex; justify-content:center; align-items:center; gap:16px;">
+        <span>全班即時投票：<span id="poll-total" style="color:var(--accent2); font-weight:700;">0</span> 人已作答</span>
+        <button id="poll-reset-btn" title="新班級重置投票" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#94a3b8; border-radius:4px; font-size:11px; padding:2px 8px; cursor:pointer;">重置投票 ↺</button>
+      </div>
+    </section>
+
+    <!-- Slide 12: 第 3 節｜劇本轉積木滑桿對比 [VIZ] -->
+    <section>
+      <div class="lesson-pill">第 3 節課｜視覺化對比</div>
+      <h2>左右拖曳滑桿：看課本劇本如何變身程式！</h2>
+      <p style="font-size:0.4em; color:#94a3b8; margin-top:-0.3em;">
+        把「（括號動作）」從台詞拿掉，變成造型與滑行移動，動畫立刻自然又逼真：
+      </p>
+      <div class="slider-box">
+        <div class="slider-layer before">
+          <div style="color:#f87171; font-weight:700; font-size:1.15em; margin-bottom:10px;">❌ 常見錯誤寫法（把舞台指示直接念出來）</div>
+          <p>
+            <strong>王后積木：</strong><br>
+            • 說出：<code>（強忍淚水）大王，您一定會康復的。王子們都在房外為您祈福。</code><br>
+            • 朗讀：<code>（強忍淚水）大王，您一定會康復的。王子們都在房外為您祈福。</code><br><br>
+            ⚠️ <strong>問題：</strong>電腦語音真的會把「強忍淚水」四個字念出來，角色卻像木頭人一樣站著不動！
+          </p>
+        </div>
+        <div class="slider-layer after" id="viz-after">
+          <div style="color:#34d399; font-weight:700; font-size:1.15em; margin-bottom:10px;">✅ 正確導演寫法（無括號台詞 ＋ 具體情緒動作）</div>
+          <p>
+            <strong>王后積木（<code>line_04_queen_1</code>）：</strong><br>
+            1. 造型換成 <code>王后_強忍淚水</code>（眼角含淚）<br>
+            2. 向前滑行靠近病床 <code>(-35, -25)</code> 並微前傾關懷<br>
+            3. 說出＋朗讀：<code>大王，您一定會康復的。王子們都在房外為您祈福。</code><br>
+            4. 說出空白並退回原位 → ✨ 演出超生動！
+          </p>
+        </div>
+        <div class="slider-divider" id="viz-divider"></div>
+      </div>
+      <input type="range" min="0" max="100" value="0" class="slider-ctrl" id="viz-slider" />
+      <div style="display:flex; justify-content:space-between; width:80%; margin:4px auto 0; font-size:0.35em; color:#94a3b8;">
+        <span>👈 錯誤：念出括號</span>
+        <span>正確：造型＋動作演繹 👉</span>
+      </div>
+    </section>
+
+    <!-- Slide 13: 第 4 節｜兄弟相爭與王后鼓勵 -->
+    <section>
+      <div class="lesson-pill">第 4 節課｜兄弟相爭與鼓勵</div>
+      <h2>國王苦惱搖頭 vs 王后細數王子長處</h2>
+      <div style="margin-bottom:8px;">
+        開啟檔案：<span class="file-badge">學生第4節_兄弟相爭與靈光一閃.sb3</span>
+      </div>
+      <div class="two-col">
+        <div class="col-box" style="border-top:4px solid var(--accent);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <img src="images/sb3_assets/國王_國王_苦惱.png" style="height:110px; object-fit:contain;" alt="國王苦惱">
+            <div style="font-size:0.38em; line-height:1.7; color:#cbd5e1;">
+              <strong style="color:var(--accent); font-size:1.15em;">國王苦惱訴苦</strong><br>
+              切換 <code>國王_苦惱</code> ＋ 左右微移搖頭。<br>
+              台詞：「王子多，煩惱多。兄弟相爭太過火，勾心鬥角不合作。」<br>
+              「背地裡卻像一盤散沙，禁不起考驗。」
+            </div>
+          </div>
+        </div>
+        <div class="col-box" style="border-top:4px solid var(--success);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <img src="images/sb3_assets/王后_王后_微笑自信.png" style="height:110px; object-fit:contain;" alt="王后微笑自信">
+            <div style="font-size:0.38em; line-height:1.7; color:#cbd5e1;">
+              <strong style="color:var(--success); font-size:1.15em;">王后微笑細數長處</strong><br>
+              切換 <code>王后_微笑自信</code> ＋ 開心微跳。<br>
+              大兒子力氣強大、老二忠心不二、老三心地良善、老四博學多識！
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sprite-strip" style="margin-top:12px;">
+        <div class="sprite-chip"><img src="images/sb3_assets/四位王子_大王子_力氣強大.png" alt="大王子"><span>大王子：力氣強大</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/四位王子_二王子_忠心不二.png" alt="二王子"><span>二王子：忠心不二</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/四位王子_三王子_心地良善.png" alt="三王子"><span>三王子：心地良善</span></div>
+        <div class="sprite-chip"><img src="images/sb3_assets/四位王子_四王子_博學多識.png" alt="四王子"><span>四王子：博學多識</span></div>
+      </div>
+    </section>
+
+    <!-- Slide 14: 第 4 節｜靈光一閃！跨角色道具連動 -->
+    <section>
+      <div class="lesson-pill">第 4 節課｜跨角色道具連動</div>
+      <h2>「我想到了！」國王跳起 ＋ 牆上弓箭同步閃爍</h2>
+      <div class="two-col">
+        <div class="asset-figure">
+          <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div>
+              <img src="images/sb3_assets/國王_國王_想到辦法.png" style="height:150px;" alt="國王想到辦法">
+              <div class="asset-caption"><code>國王_想到辦法</code></div>
+            </div>
+            <div>
+              <img src="images/sb3_assets/牆上弓箭_弓箭_一般.png" style="height:75px; margin-bottom:10px;" alt="弓箭一般">
+              <img src="images/sb3_assets/牆上弓箭_弓箭_發亮.png" style="height:75px;" alt="弓箭發亮">
+              <div class="asset-caption"><code>弓箭_一般</code> ➔ <code>弓箭_發亮</code></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-box">
+          <h3 style="color:var(--warn); margin-top:0;">⚡ 一個廣播，兩個角色一起反應！</h3>
+          <div style="font-size:0.4em; line-height:1.8; color:#e2e8f0;">
+            當 Stage 廣播 <code>line_10_king_idea</code>：<br>
+            • <strong>國王</strong>：切換 <code>國王_想到辦法</code>、微微撐起跳躍、喊出「我想到了！」<br>
+            • <strong>牆上弓箭</strong>：同時收到同一則廣播，使用 <span class="scratch-block sb-control">重複 4 次</span> 交替切換 <code>弓箭_發亮</code> 與 <code>弓箭_一般</code>，製造靈光提示！
+          </div>
+        </div>
+      </div>
+      <div class="check-box">
+        ✅ <strong>過關檢核點：</strong>角色情緒與動作一致，國王喊「我想到了！」的瞬間，牆上弓箭會同步閃爍提示、國王驚喜跳起。
+      </div>
+    </section>
+
+    <!-- Slide 15: 第 5 節｜無聲勝有聲的耳語與離場 [BG] -->
+    <section data-background-image="images/whisper_scene.png"
+             data-background-opacity="0.28"
+             data-background-size="cover">
+      <div class="lesson-pill">第 5 節課｜耳語離場收尾</div>
+      <h2>無聲勝有聲：用純動作演完最後一段！</h2>
+      <div style="margin-bottom:8px;">
+        開啟檔案：<span class="file-badge">學生第5節_耳語離場待完成.sb3</span>
+      </div>
+      <div class="two-col">
+        <div class="asset-figure">
+          <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div>
+              <img src="images/sb3_assets/國王_國王_耳語.png" style="height:145px;" alt="國王耳語">
+              <div class="asset-caption"><code>國王_耳語</code>（前傾微晃）</div>
+            </div>
+            <div>
+              <img src="images/sb3_assets/王后_王后_起身.png" style="height:145px;" alt="王后起身">
+              <div class="asset-caption"><code>王后_起身</code>（滑向門邊淡出）</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-box" style="background:rgba(13,17,23,0.82);">
+          <h3 style="color:var(--purple); margin-top:0;">🤫 課本結尾：沒有一句台詞</h3>
+          <div style="font-size:0.39em; line-height:1.78; color:#e2e8f0;">
+            課本寫：（國王在王后耳邊說了幾句話，王后點點頭，起身離開，幕下。）<br>
+            1. <strong>耳語</strong>：王后滑近床邊，國王切換 <code>國王_耳語</code> 前傾微晃。<br>
+            2. <strong>點頭</strong>：王后 y 座標上下移動 2 次（代表點點頭）。<br>
+            3. <strong>離場</strong>：切換 <code>王后_起身</code> 滑向右方門邊 <code>(200, -35)</code>，用 <span class="scratch-block sb-looks">將幻影特效增加 10</span> 重複 10 次優雅淡出！
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 16: 第 5 節｜完美幕落與全劇總驗收 -->
+    <section>
+      <div class="lesson-pill">第 5 節課｜幕落與總驗收</div>
+      <h2>拉合紅絨布幕，第一幕完整殺青！</h2>
+      <div class="two-col">
+        <div class="col-box">
+          <h3 style="color:var(--accent); margin-top:0;">🎬 最後的廣播收尾</h3>
+          <div style="font-size:0.4em; line-height:1.8; color:#e2e8f0;">
+            1. 王后淡出離場後，Stage 廣播 <code>curtain_close</code>。<br>
+            2. <code>舞台布幕</code> 移到最上層，從上方滑行回 <code>(0, 0)</code> 完美幕落。<br>
+            3. 切換背景至 <code>第一幕結束</code>，留下接續第二幕的廣播起點！
+          </div>
+        </div>
+        <div class="asset-figure">
+          <img src="images/sb3_assets/Stage_第一幕結束.svg" alt="第一幕結束">
+          <div class="asset-caption">結尾定格畫面：<code>第一幕結束</code></div>
+        </div>
+      </div>
+      <div class="check-box">
+        ✅ <strong>全劇總檢核點：</strong>從綠旗片頭、幕起、旁白、國王王后對話、靈光弓箭閃爍，到無聲耳語與幕落，全程<strong>零括號文字</strong>出現在氣泡或語音裡，五節課作品完整可播放！
+      </div>
+    </section>
+
+    <!-- Slide 17: 素養延伸：團結合作與雙軌思維 -->
+    <section>
+      <h2>跨領域素養：從《王子折箭》學到的兩件事</h2>
+      <div class="two-col" style="margin-top:0.8em;">
+        <div class="col-box" style="border-top:4px solid var(--success);">
+          <h3 style="color:var(--success); margin-top:0;">🤝 SDG 16：溝通合作，團結力量大</h3>
+          <div style="font-size:0.4em; line-height:1.75; color:#cbd5e1;">
+            國王擔心「兄弟相爭像一盤散沙」，王后卻看見每位王子各有長處（力氣大、忠心、良善、博學）。<br><br>
+            就像做 Scratch 專題一樣，每個角色、每個組員各司其職、彼此配合，才能演出最棒的團隊作品！
+          </div>
+        </div>
+        <div class="col-box" style="border-top:4px solid var(--accent2);">
+          <h3 style="color:var(--accent2); margin-top:0;">💡 資訊素養：斷網也不怕的雙軌備援</h3>
+          <div style="font-size:0.4em; line-height:1.75; color:#cbd5e1;">
+            為什麼我們堅持同時寫「<code>說出</code> 對話氣泡」＋「<code>朗讀</code> 文字轉語音」？<br><br>
+            因為 <code>text2speech</code> 需要網路連線，萬一電腦教室斷網或沒接喇叭，對話氣泡就是最好的<strong>雙軌備援</strong>，讓觀眾一樣看得懂劇情！
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 18: 封底 [BG] -->
+    <section data-background-image="images/ending.png"
+             data-background-opacity="0.36"
+             data-background-size="cover">
+      <div class="title-slide">
+        <div class="tag">任務完成 · 第一幕殺青</div>
+        <h1 style="color:var(--accent2);">恭喜成為 Scratch 小導演！</h1>
+        <h2 style="color:var(--warn); font-size:1.0em;">下一站：用 <code>act1_end</code> 接續第二幕</h2>
+        <div style="max-width:640px; margin:1em auto; background:rgba(13,17,23,0.78); border:1px solid rgba(255,255,255,0.16); border-radius:12px; padding:16px 22px; font-size:0.42em; line-height:1.8; text-align:left;">
+          🚀 <strong>課後延伸挑戰：</strong><br>
+          1. 試著開啟教師完整版 <code>王子折箭_第一幕_教師完整版.sb3</code>，對照看看自己的動畫節奏。<br>
+          2. 在 Stage 最後加上「廣播 <code>act2_start</code>」，挑戰製作第二幕「四位王子與折箭考驗」！
+        </div>
+        <p class="author">翰林四上國語第九課《王子折箭》× Scratch 3.0 教學簡報</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    backgroundTransition: 'fade',
+    center: true,
+    progress: true,
+    controls: true,
+    slideNumber: 'c/t',
+    keyboardCondition: function() {
+      const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      return tag !== 'input' && tag !== 'textarea' && tag !== 'select';
+    }
+  });
+
+  // === VIZ: 劇本括號文字 vs 動作演繹滑桿 ===
+  const vizSlider = document.getElementById('viz-slider');
+  if (vizSlider) {
+    vizSlider.addEventListener('input', function() {
+      const v = +this.value;
+      document.getElementById('viz-after').style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+      document.getElementById('viz-divider').style.left = v + '%';
+    });
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+  import {
+    getFirestore, collection, addDoc, doc, setDoc, onSnapshot,
+    serverTimestamp, query, orderBy
+  } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAYQhNavPSce17XtvDC5xnXyl9iUhW9KjA",
+    authDomain: "teacherstudy-109ef.firebaseapp.com",
+    projectId: "teacherstudy-109ef",
+    storageBucket: "teacherstudy-109ef.firebasestorage.app",
+    messagingSenderId: "196599230156",
+    appId: "1:196599230156:web:cfe55d364df3ae1b9d5c69"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const fdb = getFirestore(app);
+
+  // === 1. 即時文字雲 ===
+  const wordsRef = collection(fdb, 'prince_arrows_act1_wordcloud');
+  const COLORS = ['#4fc3f7','#e8643a','#ffb74d','#81c784','#ce93d8','#80deea','#f48fb1'];
+  let wcData = [];
+
+  const inputEl = document.getElementById('wc-input');
+  if (inputEl) {
+    ['keydown', 'keyup', 'keypress'].forEach(evt => {
+      inputEl.addEventListener(evt, e => {
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      });
+    });
+  }
+
+  function renderWordCloudData(words) {
+    const counts = {};
+    words.forEach(w => {
+      if (w && typeof w === 'string') {
+        const trimmed = w.trim();
+        if (trimmed) counts[trimmed] = (counts[trimmed] || 0) + 1;
+      }
+    });
+    wcData = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+    const totalEl = document.getElementById('wc-total');
+    const uniqueEl = document.getElementById('wc-unique');
+    if (totalEl) totalEl.textContent = words.length;
+    if (uniqueEl) uniqueEl.textContent = wcData.length;
+
+    const listEl = document.getElementById('wc-list');
+    if (listEl) {
+      listEl.innerHTML = wcData.slice(0, 10).map(([w, c]) =>
+        `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span>${w}</span><span style="color:var(--accent);font-weight:700;">${c}</span>
+        </div>`
+      ).join('') || '<div style="color:#64748b;padding:6px 0;">尚無資料，快當第一個！</div>';
+    }
+
+    const empty = document.getElementById('wc-empty');
+    if (empty) empty.style.display = wcData.length > 0 ? 'none' : '';
+    drawWordCloud();
+  }
+
+  function getLocalWords() {
+    try { return JSON.parse(localStorage.getItem('pa_wc_words') || '[]'); } catch(e) { return []; }
+  }
+  function saveLocalWord(word) {
+    try {
+      const arr = getLocalWords();
+      arr.push(word);
+      localStorage.setItem('pa_wc_words', JSON.stringify(arr));
+      return arr;
+    } catch(e) { return []; }
+  }
+
+  let localWords = getLocalWords();
+  if (localWords.length === 0) {
+    localWords = ['配音', '換造型', '舞台布幕', '廣播', '國王', '弓箭', '滑行'];
+    localStorage.setItem('pa_wc_words', JSON.stringify(localWords));
+  }
+  renderWordCloudData(localWords);
+
+  window.wcSubmit = async function() {
+    const input = document.getElementById('wc-input');
+    const word = input.value.trim();
+    if (!word) return;
+    const btn = document.getElementById('wc-btn');
+    btn.disabled = true;
+
+    const updated = saveLocalWord(word);
+    renderWordCloudData(updated);
+
+    try {
+      await addDoc(wordsRef, { word, created_at: serverTimestamp() });
+    } catch(e) {
+      console.warn("Firestore 雲端同步失敗（離線備援）:", e);
+    } finally {
+      input.value = '';
+      btn.disabled = false;
+      input.focus();
+    }
+  };
+
+  document.getElementById('wc-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      window.wcSubmit();
+    }
+  });
+  document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
+  document.getElementById('wc-reset-btn')?.addEventListener('click', () => {
+    localStorage.setItem('pa_wc_words', JSON.stringify([]));
+    renderWordCloudData([]);
+  });
+
+  try {
+    onSnapshot(query(wordsRef, orderBy('created_at', 'asc')), snap => {
+      const cloudWords = [];
+      snap.forEach(d => { if (d.data().word) cloudWords.push(d.data().word); });
+      if (cloudWords.length > 0) renderWordCloudData(cloudWords);
+    });
+  } catch(e) {}
+
+  function drawWordCloud() {
+    const canvas = document.getElementById('wc-canvas');
+    if (!canvas || typeof WordCloud === 'undefined') return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width < 10 || rect.height < 10) return;
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    if (wcData.length === 0) return;
+    const maxCount = wcData[0][1];
+    WordCloud(canvas, {
+      list: wcData.map(([w, c]) => [w, Math.max(18, Math.round((c / maxCount) * 72))]),
+      gridSize: 6,
+      weightFactor: 1,
+      fontFamily: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
+      color: () => COLORS[Math.floor(Math.random() * COLORS.length)],
+      backgroundColor: 'transparent',
+      rotateRatio: 0.25,
+      shuffle: true
+    });
+  }
+
+  Reveal.on('slidechanged', e => {
+    if (e.currentSlide?.id === 'slide-wordcloud') setTimeout(drawWordCloud, 150);
+  });
+
+  // === 2. 單選投票：迷思診斷 ===
+  const OPTIONS = [
+    { id: 'a', label: 'A. 放進「說出」和「朗讀」積木裡，讓電腦把「強忍淚水」念出來' },
+    { id: 'b', label: 'B. 拿掉括號文字！改用「王后_強忍淚水」造型加上向前滑行動作演出' },
+    { id: 'c', label: 'C. 只放進「說出」氣泡就好，不要讓電腦朗讀' }
+  ];
+  const pollRef = doc(fdb, 'prince_arrows_act1_poll', 'results');
+  const userId = 'student_' + Math.random().toString(36).slice(2, 9);
+  let myVote = null;
+
+  const container = document.getElementById('poll-options');
+  OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.id = `poll-btn-${opt.id}`;
+    btn.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="flex:0 0 24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);
+                     display:flex;align-items:center;justify-content:center;font-size:12px;"
+              id="poll-check-${opt.id}"></span>
+        <span style="flex:1;text-align:left;">${opt.label}</span>
+        <span id="poll-bar-wrap-${opt.id}"
+              style="flex:0 0 120px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+          <div id="poll-bar-${opt.id}" style="height:100%;width:0;background:var(--accent2);border-radius:4px;transition:width 0.4s;"></div>
+        </span>
+        <span id="poll-pct-${opt.id}" style="flex:0 0 36px;text-align:right;font-size:0.75em;color:#888;">0%</span>
+      </div>
+    `;
+    btn.style.cssText = `width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;
+      font-size:0.46em;cursor:pointer;font-family:inherit;text-align:left;`;
+    btn.onclick = () => vote(opt.id);
+    container.appendChild(btn);
+  });
+
+  function updatePollUI(counts) {
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    document.getElementById('poll-total').textContent = total;
+    OPTIONS.forEach(opt => {
+      const pct = total > 0 ? Math.round((counts[opt.id] / total) * 100) : 0;
+      document.getElementById(`poll-bar-${opt.id}`).style.width = pct + '%';
+      document.getElementById(`poll-pct-${opt.id}`).textContent = pct + '%';
+      const check = document.getElementById(`poll-check-${opt.id}`);
+      if (myVote === opt.id) {
+        check.textContent = '✓';
+        check.style.background = 'var(--accent2)';
+        check.style.borderColor = 'var(--accent2)';
+      } else {
+        check.textContent = '';
+        check.style.background = 'transparent';
+        check.style.borderColor = 'rgba(255,255,255,0.3)';
+      }
+    });
+  }
+
+  let localCounts = { a: 0, b: 0, c: 0 };
+  async function vote(optId) {
+    if (myVote && localCounts[myVote] > 0) localCounts[myVote]--;
+    myVote = optId;
+    localCounts[optId]++;
+    updatePollUI(localCounts);
+    try {
+      const data = {};
+      data[`votes.${userId}`] = optId;
+      data.updated_at = serverTimestamp();
+      await setDoc(pollRef, data, { merge: true });
+    } catch(e) {}
+  }
+
+  document.getElementById('poll-reset-btn')?.addEventListener('click', () => {
+    myVote = null;
+    localCounts = { a: 0, b: 0, c: 0 };
+    updatePollUI(localCounts);
+  });
+
+  try {
+    onSnapshot(pollRef, snap => {
+      const data = snap.data() || {};
+      const votes = data.votes || {};
+      const counts = { a: 0, b: 0, c: 0 };
+      Object.values(votes).forEach(v => { if (counts[v] !== undefined) counts[v]++; });
+      if (Object.values(counts).reduce((x, y) => x + y, 0) > 0) {
+        localCounts = counts;
+        updatePollUI(counts);
+      }
+    });
+  } catch(e) {}
+</script>
+</body>
+</html>
