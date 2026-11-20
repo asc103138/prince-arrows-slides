@@ -210,42 +210,285 @@
       margin-top: 12px;
     }
 
-    /* === 滑桿對比組件 === */
+    /* === 滑桿對比組件（含即時動畫舞台） === */
     .slider-box {
       position: relative;
-      height: 360px;
+      height: 375px;
       border-radius: 14px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: #111827;
-      margin-top: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #0f172a;
+      margin-top: 8px;
+      user-select: none;
+      touch-action: none;
+      cursor: ew-resize;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45);
     }
     .slider-layer {
       position: absolute;
       inset: 0;
-      padding: 22px 26px;
+      padding: 16px 20px;
       box-sizing: border-box;
       text-align: left;
-      font-size: 0.42em;
-      line-height: 1.75;
-      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+      align-items: stretch;
     }
-    .slider-layer.before { background: #1e1b4b; color: #e0e7ff; }
-    .slider-layer.after  { background: #064e3b; color: #ecfdf5; clip-path: inset(0 100% 0 0); }
+    .slider-layer.before {
+      background: linear-gradient(135deg, #1f1635 0%, #2b1427 100%);
+      color: #e0e7ff;
+    }
+    .slider-layer.after {
+      background: linear-gradient(135deg, #063b2e 0%, #0b2942 100%);
+      color: #ecfdf5;
+      clip-path: inset(0 100% 0 0);
+    }
+    .viz-stage {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.16);
+      background: #0b1120 url('images/sb3_assets/Stage_國王房間.png') center/cover no-repeat;
+      box-shadow: inset 0 0 36px rgba(0,0,0,0.55);
+    }
+    .slider-layer.before .viz-stage {
+      filter: saturate(0.55) contrast(0.92);
+      border-color: rgba(248,113,113,0.45);
+    }
+    .slider-layer.after .viz-stage {
+      border-color: rgba(52,211,153,0.65);
+      box-shadow: inset 0 0 24px rgba(16,185,129,0.22), 0 0 18px rgba(52,211,153,0.22);
+    }
+    .viz-badge {
+      position: absolute;
+      top: 10px; left: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      z-index: 4;
+      backdrop-filter: blur(6px);
+    }
+    .viz-badge.bad {
+      background: rgba(220,38,38,0.82);
+      color: #fff;
+      border: 1px solid rgba(254,202,202,0.5);
+    }
+    .viz-badge.good {
+      background: rgba(16,185,129,0.86);
+      color: #052e16;
+      border: 1px solid rgba(167,243,208,0.7);
+    }
+    .viz-king {
+      position: absolute;
+      left: 16%;
+      bottom: 14%;
+      height: 155px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6));
+      z-index: 2;
+    }
+    .viz-queen {
+      position: absolute;
+      right: 12%;
+      bottom: 14%;
+      height: 160px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+      z-index: 3;
+      transform-origin: bottom center;
+      will-change: transform;
+    }
+    .viz-queen.stiff {
+      animation: stiffShake 2.6s steps(2) infinite;
+    }
+    @keyframes stiffShake {
+      0%, 92%, 100% { transform: translateX(0); }
+      95% { transform: translateX(2px); }
+      98% { transform: translateX(-2px); }
+    }
+    .viz-bubble {
+      position: absolute;
+      top: 46px;
+      right: 14px;
+      max-width: 64%;
+      padding: 9px 13px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      font-weight: 600;
+      z-index: 5;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    }
+    .viz-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      right: 36px;
+      border-width: 8px 8px 0 8px;
+      border-style: solid;
+    }
+    .viz-bubble.bad {
+      background: rgba(254,242,242,0.96);
+      color: #7f1d1d;
+      border: 2px solid #ef4444;
+    }
+    .viz-bubble.bad::after { border-color: #ef4444 transparent transparent transparent; }
+    .viz-bubble.good {
+      background: rgba(236,253,245,0.97);
+      color: #064e3b;
+      border: 2px solid #10b981;
+      transform-origin: bottom right;
+      will-change: transform, opacity;
+    }
+    .viz-bubble.good::after { border-color: #10b981 transparent transparent transparent; }
+    .viz-err-tag {
+      display: inline-block;
+      background: #ef4444;
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-weight: 700;
+      animation: errBlink 1.1s ease-in-out infinite;
+    }
+    @keyframes errBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.65; transform: scale(0.97); }
+    }
+    .viz-tear {
+      position: absolute;
+      width: 7px;
+      height: 10px;
+      border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+      background: radial-gradient(circle at 35% 35%, #ffffff, #38bdf8);
+      box-shadow: 0 0 8px #38bdf8;
+      z-index: 6;
+      pointer-events: none;
+      animation: tearDrop 1.7s ease-in infinite;
+    }
+    @keyframes tearDrop {
+      0% { opacity: 0; transform: translateY(0) scale(0.7); }
+      25% { opacity: 1; transform: translateY(4px) scale(1); }
+      100% { opacity: 0; transform: translateY(22px) scale(0.8); }
+    }
+    .viz-hud {
+      position: absolute;
+      left: 10px; right: 10px; bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(15,23,42,0.82);
+      border: 1px solid rgba(255,255,255,0.14);
+      font-size: 12px;
+      color: #cbd5e1;
+      z-index: 5;
+      font-family: monospace;
+    }
+    .viz-wave {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 16px;
+    }
+    .viz-wave span {
+      display: block;
+      width: 3px;
+      border-radius: 2px;
+      background: #34d399;
+      animation: soundBar 0.85s ease-in-out infinite alternate;
+    }
+    .viz-wave span:nth-child(2) { animation-delay: 0.15s; }
+    .viz-wave span:nth-child(3) { animation-delay: 0.3s; }
+    .viz-wave span:nth-child(4) { animation-delay: 0.45s; }
+    .viz-wave span:nth-child(5) { animation-delay: 0.2s; }
+    .viz-wave.flat span {
+      background: #f87171;
+      height: 4px !important;
+      animation: none;
+      opacity: 0.7;
+    }
+    @keyframes soundBar {
+      0% { height: 4px; }
+      100% { height: 15px; }
+    }
+    .viz-code-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.37em;
+      line-height: 1.55;
+    }
+    .viz-step {
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(15,23,42,0.52);
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+    .viz-step.lit {
+      background: rgba(16,185,129,0.22);
+      border-color: rgba(52,211,153,0.75);
+      transform: translateX(4px);
+    }
     .slider-divider {
       position: absolute;
       top: 0; left: 0;
       width: 3px; height: 100%;
-      background: linear-gradient(to bottom, transparent, #4fc3f7, #81c784, transparent);
-      box-shadow: 0 0 14px #4fc3f7;
+      background: linear-gradient(to bottom, #4fc3f7, #34d399, #4fc3f7);
+      box-shadow: 0 0 16px rgba(79,195,247,0.9);
       pointer-events: none;
+      z-index: 10;
+    }
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4fc3f7, #34d399);
+      color: #06281e;
+      font-weight: 900;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px rgba(15,23,42,0.85), 0 0 18px rgba(79,195,247,0.85);
+    }
+    .viz-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 88%;
+      margin: 10px auto 0;
     }
     .slider-ctrl {
-      width: 80%;
-      margin: 12px auto 0;
-      display: block;
+      flex: 1;
+      margin: 0;
       accent-color: var(--accent2);
+      cursor: pointer;
     }
+    .viz-play-btn {
+      background: linear-gradient(135deg, var(--accent2), #34d399);
+      color: #06281e;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.35em;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(79,195,247,0.35);
+      transition: transform 0.15s ease;
+    }
+    .viz-play-btn:active { transform: scale(0.95); }
 
     /* === 動畫與按鈕 === */
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
@@ -568,36 +811,84 @@
     <!-- Slide 12: 第 3 節｜劇本轉積木滑桿對比 [VIZ] -->
     <section data-background-image="images/bg_slide_12.png" data-background-opacity="0.22" data-background-size="cover">
       <div class="lesson-pill">第 3 節課｜視覺化對比</div>
-      <h2>左右拖曳滑桿：看課本劇本如何變身程式！</h2>
-      <p style="font-size:0.4em; color:#94a3b8; margin-top:-0.3em;">
-        把「（括號動作）」從台詞拿掉，變成造型與滑行移動，動畫立刻自然又逼真：
+      <h2 style="font-size:1.15em;">左右拖曳滑桿：看課本劇本如何變身程式！</h2>
+      <p style="font-size:0.38em; color:#94a3b8; margin-top:-0.35em;">
+        拖曳拉桿或直接點擊「自動演示變身」，觀察王后從「呆站念括號」變成「含淚滑行關懷」的真實舞台變化：
       </p>
-      <div class="slider-box">
+      <div class="slider-box" id="viz-box">
+        <!-- Before 層：錯誤寫法（呆站念出括號） -->
         <div class="slider-layer before">
-          <div style="color:#f87171; font-weight:700; font-size:1.15em; margin-bottom:10px;">❌ 常見錯誤寫法（把舞台指示直接念出來）</div>
-          <p>
-            <strong>王后積木：</strong><br>
-            • 說出：<code>（強忍淚水）大王，您一定會康復的。王子們都在房外為您祈福。</code><br>
-            • 朗讀：<code>（強忍淚水）大王，您一定會康復的。王子們都在房外為您祈福。</code><br><br>
-            ⚠️ <strong>問題：</strong>電腦語音真的會把「強忍淚水」四個字念出來，角色卻像木頭人一樣站著不動！
-          </p>
+          <div class="viz-stage">
+            <div class="viz-badge bad">❌ 錯誤寫法：木頭人念出括號</div>
+            <div class="viz-bubble bad">
+              <span class="viz-err-tag">（強忍淚水）</span>大王，您一定會康復的。王子們都在房外為您祈福。
+            </div>
+            <img src="images/sb3_assets/國王_國王_病容.png" class="viz-king" alt="國王病容">
+            <img src="images/sb3_assets/王后_王后_坐姿.png" class="viz-queen stiff" alt="王后僵硬坐姿">
+            <div class="viz-hud">
+              <span>x: 110（原地不動）｜造型：王后_坐姿</span>
+              <span class="viz-wave flat" title="呆板語音"><span></span><span></span><span></span><span></span><span></span></span>
+            </div>
+          </div>
+          <div class="viz-code-panel">
+            <div style="color:#f87171; font-weight:800; font-size:1.15em;">❌ 常見錯誤積木</div>
+            <div class="viz-step" style="border-color:rgba(248,113,113,0.45);">
+              <span class="scratch-block sb-looks">說出</span> <code>（強忍淚水）大王，您一定會康復的…</code>
+            </div>
+            <div class="viz-step" style="border-color:rgba(248,113,113,0.45);">
+              <span class="scratch-block sb-tts">朗讀</span> <code>（強忍淚水）大王，您一定會康復的…</code>
+            </div>
+            <div style="color:#fca5a5; font-size:0.95em; margin-top:4px;">
+              ⚠️ 電腦真的會把「強忍淚水」四個字念出來，角色卻像木頭人一樣沒有表情也沒有移動！
+            </div>
+          </div>
         </div>
+
+        <!-- After 層：正確導演寫法（隨滑桿動態演繹） -->
         <div class="slider-layer after" id="viz-after">
-          <div style="color:#34d399; font-weight:700; font-size:1.15em; margin-bottom:10px;">✅ 正確導演寫法（無括號台詞 ＋ 具體情緒動作）</div>
-          <p>
-            <strong>王后積木（<code>line_04_queen_1</code>）：</strong><br>
-            1. 造型換成 <code>王后_強忍淚水</code>（眼角含淚）<br>
-            2. 向前滑行靠近病床 <code>(-35, -25)</code> 並微前傾關懷<br>
-            3. 說出＋朗讀：<code>大王，您一定會康復的。王子們都在房外為您祈福。</code><br>
-            4. 說出空白並退回原位 → ✨ 演出超生動！
-          </p>
+          <div class="viz-stage">
+            <div class="viz-badge good">✅ 正確寫法：無括號 ＋ 含淚滑行關懷</div>
+            <div class="viz-bubble good" id="viz-good-bubble">
+              大王，您一定會康復的。王子們都在房外為您祈福。
+            </div>
+            <img src="images/sb3_assets/國王_國王_病容.png" class="viz-king" alt="國王病容">
+            <img src="images/sb3_assets/王后_王后_強忍淚水.png" class="viz-queen" id="viz-good-queen" alt="王后強忍淚水">
+            <div class="viz-tear" id="viz-tear" style="right: 36%; bottom: 48%;"></div>
+            <div class="viz-hud">
+              <span id="viz-hud-text">x: 110 ➔ -35｜造型：王后_強忍淚水</span>
+              <span class="viz-wave" title="ALTO 溫柔語音"><span></span><span></span><span></span><span></span><span></span></span>
+            </div>
+          </div>
+          <div class="viz-code-panel">
+            <div style="color:#34d399; font-weight:800; font-size:1.15em;">✅ 正確導演積木（<code>line_04_queen_1</code>）</div>
+            <div class="viz-step" id="viz-step-1">
+              1. <span class="scratch-block sb-looks">造型換成</span> <code>王后_強忍淚水</code>（眼角含淚）
+            </div>
+            <div class="viz-step" id="viz-step-2">
+              2. <span class="scratch-block sb-motion">滑行到</span> <code>(-35, -25)</code> 靠近病床微前傾
+            </div>
+            <div class="viz-step" id="viz-step-3">
+              3. <span class="scratch-block sb-looks">說出</span>＋<span class="scratch-block sb-tts">朗讀</span>（乾淨無括號台詞）
+            </div>
+            <div class="viz-step" id="viz-step-4">
+              4. <span class="scratch-block sb-looks">說出空白</span> 並優雅退回原位 ✨
+            </div>
+          </div>
         </div>
-        <div class="slider-divider" id="viz-divider"></div>
+
+        <div class="slider-divider" id="viz-divider">
+          <div class="slider-handle">◀▶</div>
+        </div>
       </div>
-      <input type="range" min="0" max="100" value="0" class="slider-ctrl" id="viz-slider" />
-      <div style="display:flex; justify-content:space-between; width:80%; margin:4px auto 0; font-size:0.35em; color:#94a3b8;">
-        <span>👈 錯誤：念出括號</span>
-        <span>正確：造型＋動作演繹 👉</span>
+
+      <div class="viz-controls-row">
+        <button id="viz-play-btn" class="viz-play-btn" type="button">▶ 自動演示變身</button>
+        <input type="range" min="0" max="100" value="0" class="slider-ctrl" id="viz-slider" />
+        <span id="viz-pct-label" style="font-size:0.35em; color:var(--accent2); font-weight:700; min-width:44px; text-align:right; font-family:monospace;">0%</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; width:88%; margin:4px auto 0; font-size:0.34em; color:#94a3b8;">
+        <span>👈 錯誤：原地僵硬念出括號</span>
+        <span>正確：切換含淚造型 ＋ 滑行靠近關懷 👉</span>
       </div>
     </section>
 
@@ -786,13 +1077,114 @@
     }
   });
 
-  // === VIZ: 劇本括號文字 vs 動作演繹滑桿 ===
+  // === VIZ: 劇本括號文字 vs 動作演繹滑桿（即時驅動舞台角色動畫） ===
   const vizSlider = document.getElementById('viz-slider');
+  const vizBox = document.getElementById('viz-box');
+  const vizAfter = document.getElementById('viz-after');
+  const vizDivider = document.getElementById('viz-divider');
+  const vizQueen = document.getElementById('viz-good-queen');
+  const vizTear = document.getElementById('viz-tear');
+  const vizBubble = document.getElementById('viz-good-bubble');
+  const vizHudText = document.getElementById('viz-hud-text');
+  const vizPctLabel = document.getElementById('viz-pct-label');
+  const vizPlayBtn = document.getElementById('viz-play-btn');
+  const vizSteps = [
+    document.getElementById('viz-step-1'),
+    document.getElementById('viz-step-2'),
+    document.getElementById('viz-step-3'),
+    document.getElementById('viz-step-4')
+  ];
+  let vizAnimFrame = null;
+
+  function applyVizProgress(v) {
+    const clamped = Math.max(0, Math.min(100, v));
+    const p = clamped / 100;
+    if (vizSlider) vizSlider.value = clamped;
+    if (vizAfter) vizAfter.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
+    if (vizDivider) vizDivider.style.left = clamped + '%';
+    if (vizPctLabel) vizPctLabel.textContent = Math.round(clamped) + '%';
+
+    // 王后滑行靠近病床 + 微前傾關懷（從 0px 滑行到 -82px，傾斜 -5deg）
+    const slideX = -82 * p;
+    const tiltDeg = -5 * Math.sin(p * Math.PI * 0.85);
+    const liftY = -6 * Math.sin(p * Math.PI);
+    if (vizQueen) {
+      vizQueen.style.transform = `translate(${slideX.toFixed(1)}px, ${liftY.toFixed(1)}px) rotate(${tiltDeg.toFixed(2)}deg)`;
+    }
+    if (vizTear) {
+      vizTear.style.transform = `translateX(${slideX.toFixed(1)}px)`;
+      vizTear.style.opacity = p > 0.15 ? '1' : '0';
+    }
+    // 氣泡彈性浮現並微隨王后移動
+    if (vizBubble) {
+      const bubbleScale = 0.84 + 0.16 * Math.min(1, p * 1.4);
+      vizBubble.style.transform = `translateX(${(slideX * 0.55).toFixed(1)}px) scale(${bubbleScale.toFixed(3)})`;
+      vizBubble.style.opacity = Math.min(1, 0.25 + p * 1.1).toFixed(2);
+    }
+    // 即時更新舞台座標 HUD
+    if (vizHudText) {
+      const curX = Math.round(110 - 145 * p);
+      vizHudText.textContent = `x: ${curX}｜造型：王后_強忍淚水｜ALTO 朗讀中`;
+    }
+    // 依滑桿進度依序點亮 4 步正確積木
+    const thresholds = [15, 40, 65, 88];
+    vizSteps.forEach((el, idx) => {
+      if (el) el.classList.toggle('lit', clamped >= thresholds[idx]);
+    });
+  }
+
   if (vizSlider) {
+    applyVizProgress(0);
     vizSlider.addEventListener('input', function() {
-      const v = +this.value;
-      document.getElementById('viz-after').style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-      document.getElementById('viz-divider').style.left = v + '%';
+      if (vizAnimFrame) { cancelAnimationFrame(vizAnimFrame); vizAnimFrame = null; }
+      applyVizProgress(+this.value);
+    });
+    vizSlider.addEventListener('keydown', e => e.stopPropagation());
+  }
+
+  // 支援直接在舞台區域滑鼠/觸控左右拖曳
+  if (vizBox) {
+    let dragging = false;
+    const updateFromClientX = (clientX) => {
+      const rect = vizBox.getBoundingClientRect();
+      const pct = ((clientX - rect.left) / rect.width) * 100;
+      applyVizProgress(pct);
+    };
+    vizBox.addEventListener('pointerdown', e => {
+      dragging = true;
+      if (vizAnimFrame) { cancelAnimationFrame(vizAnimFrame); vizAnimFrame = null; }
+      vizBox.setPointerCapture(e.pointerId);
+      updateFromClientX(e.clientX);
+    });
+    vizBox.addEventListener('pointermove', e => {
+      if (dragging) updateFromClientX(e.clientX);
+    });
+    vizBox.addEventListener('pointerup', () => { dragging = false; });
+    vizBox.addEventListener('pointercancel', () => { dragging = false; });
+  }
+
+  // 一鍵自動演示變身按鈕（0% -> 100% 平滑播放，若已在尾端則重播）
+  if (vizPlayBtn) {
+    vizPlayBtn.addEventListener('click', () => {
+      if (vizAnimFrame) { cancelAnimationFrame(vizAnimFrame); vizAnimFrame = null; }
+      const startVal = (+vizSlider.value >= 98) ? 0 : +vizSlider.value;
+      const targetVal = 100;
+      const duration = 2200 * ((targetVal - startVal) / 100);
+      const startTime = performance.now();
+      vizPlayBtn.textContent = '⏸ 演示中…';
+      function step(now) {
+        const t = Math.min(1, (now - startTime) / Math.max(200, duration));
+        // easeInOutCubic
+        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        applyVizProgress(startVal + (targetVal - startVal) * eased);
+        if (t < 1) {
+          vizAnimFrame = requestAnimationFrame(step);
+        } else {
+          vizAnimFrame = null;
+          vizPlayBtn.textContent = '↺ 重播變身動畫';
+        }
+      }
+      vizAnimFrame = requestAnimationFrame(step);
     });
   }
 </script>
